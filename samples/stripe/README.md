@@ -4,6 +4,7 @@ Datos sintéticos, generados en el modo prueba de Stripe (`livemode: false`) par
 No contienen claves ni datos reales.
 
 | Archivo | Motivo | Evidencia enviada | Resultado |
+| -- | -- | -- | -- |
 | `disputa_ganada.json` | `fraudulent` | `winning_evidence` | `won` |
 | `disputa_perdida.json` | `product_not_received` | `losing_evidence` | `lost` |
 
