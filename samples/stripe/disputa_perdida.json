@@ -1,0 +1,607 @@
+{
+  "_synthetic": true,
+  "_source": "Stripe test mode",
+  "_task": "JPTRS-53",
+  "_generated_at": "2026-10-13T14:48:40.226480+00:00",
+  "case": "perdida",
+  "payment_intent": {
+    "id": "pi_3UQ70H0fs4pzuDII1O79nnUX",
+    "object": "payment_intent",
+    "allowed_payment_method_types": null,
+    "amount": 10000,
+    "amount_capturable": 0,
+    "amount_details": {
+      "tip": {}
+    },
+    "amount_received": 10000,
+    "application": null,
+    "application_fee_amount": null,
+    "automatic_payment_methods": {
+      "allow_redirects": "never",
+      "enabled": true
+    },
+    "canceled_at": null,
+    "cancellation_reason": null,
+    "capture_method": "automatic_async",
+    "confirmation_method": "automatic",
+    "created": 1791902913,
+    "currency": "usd",
+    "customer": null,
+    "customer_account": null,
+    "description": "SINTETICO · JPTRS-53 · disputa perdida",
+    "excluded_payment_method_types": null,
+    "last_payment_error": null,
+    "latest_charge": "ch_3UQ70H0fs4pzuDII1TULCLLX",
+    "livemode": false,
+    "managed_payments": {
+      "enabled": false
+    },
+    "metadata": {
+      "case": "perdida",
+      "synthetic": "true",
+      "task": "JPTRS-53"
+    },
+    "next_action": null,
+    "on_behalf_of": null,
+    "payment_method": "pm_1UQ70H0fs4pzuDIIk3STZBWV",
+    "payment_method_configuration_details": {
+      "id": "pmc_1UQ6pq0fs4pzuDII51oQqAuf",
+      "parent": null
+    },
+    "payment_method_options": {
+      "card": {
+        "installments": null,
+        "mandate_options": null,
+        "network": null,
+        "request_three_d_secure": "automatic"
+      },
+      "link": {
+        "persistent_token": null
+      }
+    },
+    "payment_method_types": [
+      "card",
+      "link"
+    ],
+    "payment_record": null,
+    "processing": null,
+    "receipt_email": null,
+    "review": null,
+    "setup_future_usage": null,
+    "shared_payment_granted_token": null,
+    "shipping": null,
+    "source": null,
+    "statement_descriptor": null,
+    "statement_descriptor_suffix": null,
+    "status": "succeeded",
+    "transfer_data": null,
+    "transfer_group": null
+  },
+  "dispute": {
+    "id": "du_1UQ70J0fs4pzuDIIMSkMLS3L",
+    "object": "dispute",
+    "amount": 10000,
+    "balance_transaction": "txn_1UQ70K0fs4pzuDIICxNJrdT2",
+    "balance_transactions": [
+      {
+        "id": "txn_1UQ70K0fs4pzuDIICxNJrdT2",
+        "object": "balance_transaction",
+        "amount": -10000,
+        "available_on": 1791902915,
+        "balance_type": "payments",
+        "created": 1791902915,
+        "currency": "usd",
+        "description": "Chargeback withdrawal for ch_3UQ70H0fs4pzuDII1TULCLLX",
+        "exchange_rate": null,
+        "fee": 1500,
+        "fee_details": [
+          {
+            "amount": 1500,
+            "application": null,
+            "currency": "usd",
+            "description": "Dispute fee",
+            "type": "stripe_fee"
+          }
+        ],
+        "net": -11500,
+        "reporting_category": "dispute",
+        "source": "du_1UQ70J0fs4pzuDIIMSkMLS3L",
+        "status": "available",
+        "type": "adjustment"
+      }
+    ],
+    "charge": "ch_3UQ70H0fs4pzuDII1TULCLLX",
+    "created": 1791902915,
+    "currency": "usd",
+    "enhanced_eligibility_types": [],
+    "evidence": {
+      "access_activity_log": null,
+      "billing_address": null,
+      "cancellation_policy": null,
+      "cancellation_policy_disclosure": null,
+      "cancellation_rebuttal": null,
+      "customer_communication": null,
+      "customer_email_address": null,
+      "customer_name": null,
+      "customer_purchase_ip": null,
+      "customer_signature": null,
+      "duplicate_charge_documentation": null,
+      "duplicate_charge_explanation": null,
+      "duplicate_charge_id": null,
+      "enhanced_evidence": {},
+      "product_description": "SINTETICO · JPTRS-53 · disputa perdida",
+      "receipt": null,
+      "refund_policy": null,
+      "refund_policy_disclosure": null,
+      "refund_refusal_explanation": null,
+      "service_date": null,
+      "service_documentation": null,
+      "shipping_address": null,
+      "shipping_carrier": null,
+      "shipping_date": null,
+      "shipping_documentation": null,
+      "shipping_tracking_number": null,
+      "uncategorized_file": null,
+      "uncategorized_text": "losing_evidence"
+    },
+    "evidence_details": {
+      "due_by": 1792627199,
+      "enhanced_eligibility": {},
+      "has_evidence": true,
+      "past_due": false,
+      "submission_count": 1
+    },
+    "intended_submission_method": "prefer_manual",
+    "is_charge_refundable": false,
+    "livemode": false,
+    "metadata": {},
+    "payment_intent": "pi_3UQ70H0fs4pzuDII1O79nnUX",
+    "payment_method_details": {
+      "card": {
+        "brand": "visa",
+        "case_type": "chargeback",
+        "network": "visa",
+        "network_reason_code": "13.1"
+      },
+      "type": "card"
+    },
+    "reason": "product_not_received",
+    "status": "lost"
+  },
+  "events": [
+    {
+      "id": "evt_1UQ70K0fs4pzuDIIDoyf5PSs",
+      "object": "event",
+      "api_version": "2026-09-30.endive",
+      "created": 1791902916,
+      "data": {
+        "object": {
+          "id": "du_1UQ70J0fs4pzuDIIMSkMLS3L",
+          "object": "dispute",
+          "amount": 10000,
+          "balance_transaction": "txn_1UQ70K0fs4pzuDIICxNJrdT2",
+          "balance_transactions": [
+            {
+              "id": "txn_1UQ70K0fs4pzuDIICxNJrdT2",
+              "object": "balance_transaction",
+              "amount": -10000,
+              "available_on": 1791902915,
+              "balance_type": "payments",
+              "created": 1791902915,
+              "currency": "usd",
+              "description": "Chargeback withdrawal for ch_3UQ70H0fs4pzuDII1TULCLLX",
+              "exchange_rate": null,
+              "fee": 1500,
+              "fee_details": [
+                {
+                  "amount": 1500,
+                  "application": null,
+                  "currency": "usd",
+                  "description": "Dispute fee",
+                  "type": "stripe_fee"
+                }
+              ],
+              "net": -11500,
+              "reporting_category": "dispute",
+              "source": "du_1UQ70J0fs4pzuDIIMSkMLS3L",
+              "status": "available",
+              "type": "adjustment"
+            }
+          ],
+          "charge": "ch_3UQ70H0fs4pzuDII1TULCLLX",
+          "created": 1791902915,
+          "currency": "usd",
+          "enhanced_eligibility_types": [],
+          "evidence": {
+            "access_activity_log": null,
+            "billing_address": null,
+            "cancellation_policy": null,
+            "cancellation_policy_disclosure": null,
+            "cancellation_rebuttal": null,
+            "customer_communication": null,
+            "customer_email_address": null,
+            "customer_name": null,
+            "customer_purchase_ip": null,
+            "customer_signature": null,
+            "duplicate_charge_documentation": null,
+            "duplicate_charge_explanation": null,
+            "duplicate_charge_id": null,
+            "enhanced_evidence": {},
+            "product_description": null,
+            "receipt": null,
+            "refund_policy": null,
+            "refund_policy_disclosure": null,
+            "refund_refusal_explanation": null,
+            "service_date": null,
+            "service_documentation": null,
+            "shipping_address": null,
+            "shipping_carrier": null,
+            "shipping_date": null,
+            "shipping_documentation": null,
+            "shipping_tracking_number": null,
+            "uncategorized_file": null,
+            "uncategorized_text": null
+          },
+          "evidence_details": {
+            "due_by": 1792627199,
+            "enhanced_eligibility": {},
+            "has_evidence": false,
+            "past_due": false,
+            "submission_count": 0
+          },
+          "intended_submission_method": "prefer_manual",
+          "is_charge_refundable": false,
+          "livemode": false,
+          "metadata": {},
+          "payment_intent": "pi_3UQ70H0fs4pzuDII1O79nnUX",
+          "payment_method_details": {
+            "card": {
+              "brand": "visa",
+              "case_type": "chargeback",
+              "network": "visa",
+              "network_reason_code": "13.1"
+            },
+            "type": "card"
+          },
+          "reason": "product_not_received",
+          "status": "needs_response"
+        }
+      },
+      "livemode": false,
+      "pending_webhooks": 0,
+      "request": {
+        "id": "req_VzfrYeO4i312nG",
+        "idempotency_key": "a149ef61-8db4-9619-20b9-97592ffbe5c3"
+      },
+      "type": "charge.dispute.funds_withdrawn"
+    },
+    {
+      "id": "evt_1UQ70K0fs4pzuDIIdAKIX9c5",
+      "object": "event",
+      "api_version": "2026-09-30.endive",
+      "created": 1791902916,
+      "data": {
+        "object": {
+          "id": "du_1UQ70J0fs4pzuDIIMSkMLS3L",
+          "object": "dispute",
+          "amount": 10000,
+          "balance_transaction": "txn_1UQ70K0fs4pzuDIICxNJrdT2",
+          "balance_transactions": [
+            {
+              "id": "txn_1UQ70K0fs4pzuDIICxNJrdT2",
+              "object": "balance_transaction",
+              "amount": -10000,
+              "available_on": 1791902915,
+              "balance_type": "payments",
+              "created": 1791902915,
+              "currency": "usd",
+              "description": "Chargeback withdrawal for ch_3UQ70H0fs4pzuDII1TULCLLX",
+              "exchange_rate": null,
+              "fee": 1500,
+              "fee_details": [
+                {
+                  "amount": 1500,
+                  "application": null,
+                  "currency": "usd",
+                  "description": "Dispute fee",
+                  "type": "stripe_fee"
+                }
+              ],
+              "net": -11500,
+              "reporting_category": "dispute",
+              "source": "du_1UQ70J0fs4pzuDIIMSkMLS3L",
+              "status": "available",
+              "type": "adjustment"
+            }
+          ],
+          "charge": "ch_3UQ70H0fs4pzuDII1TULCLLX",
+          "created": 1791902915,
+          "currency": "usd",
+          "enhanced_eligibility_types": [],
+          "evidence": {
+            "access_activity_log": null,
+            "billing_address": null,
+            "cancellation_policy": null,
+            "cancellation_policy_disclosure": null,
+            "cancellation_rebuttal": null,
+            "customer_communication": null,
+            "customer_email_address": null,
+            "customer_name": null,
+            "customer_purchase_ip": null,
+            "customer_signature": null,
+            "duplicate_charge_documentation": null,
+            "duplicate_charge_explanation": null,
+            "duplicate_charge_id": null,
+            "enhanced_evidence": {},
+            "product_description": null,
+            "receipt": null,
+            "refund_policy": null,
+            "refund_policy_disclosure": null,
+            "refund_refusal_explanation": null,
+            "service_date": null,
+            "service_documentation": null,
+            "shipping_address": null,
+            "shipping_carrier": null,
+            "shipping_date": null,
+            "shipping_documentation": null,
+            "shipping_tracking_number": null,
+            "uncategorized_file": null,
+            "uncategorized_text": null
+          },
+          "evidence_details": {
+            "due_by": 1792627199,
+            "enhanced_eligibility": {},
+            "has_evidence": false,
+            "past_due": false,
+            "submission_count": 0
+          },
+          "intended_submission_method": "prefer_manual",
+          "is_charge_refundable": false,
+          "livemode": false,
+          "metadata": {},
+          "payment_intent": "pi_3UQ70H0fs4pzuDII1O79nnUX",
+          "payment_method_details": {
+            "card": {
+              "brand": "visa",
+              "case_type": "chargeback",
+              "network": "visa",
+              "network_reason_code": "13.1"
+            },
+            "type": "card"
+          },
+          "reason": "product_not_received",
+          "status": "needs_response"
+        }
+      },
+      "livemode": false,
+      "pending_webhooks": 0,
+      "request": {
+        "id": "req_VzfrYeO4i312nG",
+        "idempotency_key": "a149ef61-8db4-9619-20b9-97592ffbe5c3"
+      },
+      "type": "charge.dispute.created"
+    },
+    {
+      "id": "evt_3UQ70H0fs4pzuDII1jZL0Q2X",
+      "object": "event",
+      "api_version": "2026-09-30.endive",
+      "created": 1791902917,
+      "data": {
+        "object": {
+          "id": "du_1UQ70J0fs4pzuDIIMSkMLS3L",
+          "object": "dispute",
+          "amount": 10000,
+          "balance_transaction": "txn_1UQ70K0fs4pzuDIICxNJrdT2",
+          "balance_transactions": [
+            {
+              "id": "txn_1UQ70K0fs4pzuDIICxNJrdT2",
+              "object": "balance_transaction",
+              "amount": -10000,
+              "available_on": 1791902915,
+              "balance_type": "payments",
+              "created": 1791902915,
+              "currency": "usd",
+              "description": "Chargeback withdrawal for ch_3UQ70H0fs4pzuDII1TULCLLX",
+              "exchange_rate": null,
+              "fee": 1500,
+              "fee_details": [
+                {
+                  "amount": 1500,
+                  "application": null,
+                  "currency": "usd",
+                  "description": "Dispute fee",
+                  "type": "stripe_fee"
+                }
+              ],
+              "net": -11500,
+              "reporting_category": "dispute",
+              "source": "du_1UQ70J0fs4pzuDIIMSkMLS3L",
+              "status": "available",
+              "type": "adjustment"
+            }
+          ],
+          "charge": "ch_3UQ70H0fs4pzuDII1TULCLLX",
+          "created": 1791902915,
+          "currency": "usd",
+          "enhanced_eligibility_types": [],
+          "evidence": {
+            "access_activity_log": null,
+            "billing_address": null,
+            "cancellation_policy": null,
+            "cancellation_policy_disclosure": null,
+            "cancellation_rebuttal": null,
+            "customer_communication": null,
+            "customer_email_address": null,
+            "customer_name": null,
+            "customer_purchase_ip": null,
+            "customer_signature": null,
+            "duplicate_charge_documentation": null,
+            "duplicate_charge_explanation": null,
+            "duplicate_charge_id": null,
+            "enhanced_evidence": {},
+            "product_description": "SINTETICO · JPTRS-53 · disputa perdida",
+            "receipt": null,
+            "refund_policy": null,
+            "refund_policy_disclosure": null,
+            "refund_refusal_explanation": null,
+            "service_date": null,
+            "service_documentation": null,
+            "shipping_address": null,
+            "shipping_carrier": null,
+            "shipping_date": null,
+            "shipping_documentation": null,
+            "shipping_tracking_number": null,
+            "uncategorized_file": null,
+            "uncategorized_text": "losing_evidence"
+          },
+          "evidence_details": {
+            "due_by": 1792627199,
+            "enhanced_eligibility": {},
+            "has_evidence": true,
+            "past_due": false,
+            "submission_count": 1
+          },
+          "intended_submission_method": "prefer_manual",
+          "is_charge_refundable": false,
+          "livemode": false,
+          "metadata": {},
+          "payment_intent": "pi_3UQ70H0fs4pzuDII1O79nnUX",
+          "payment_method_details": {
+            "card": {
+              "brand": "visa",
+              "case_type": "chargeback",
+              "network": "visa",
+              "network_reason_code": "13.1"
+            },
+            "type": "card"
+          },
+          "reason": "product_not_received",
+          "status": "under_review"
+        },
+        "previous_attributes": {
+          "evidence": {
+            "uncategorized_text": null
+          },
+          "evidence_details": {
+            "has_evidence": false,
+            "submission_count": 0
+          },
+          "status": "needs_response"
+        }
+      },
+      "livemode": false,
+      "pending_webhooks": 0,
+      "request": {
+        "id": "req_9DFqjHtzDl7cNS",
+        "idempotency_key": "b23712c4-2221-56cc-5bc7-4c2da4aea7d0"
+      },
+      "type": "charge.dispute.updated"
+    },
+    {
+      "id": "evt_1UQ70N0fs4pzuDII4MjOfo25",
+      "object": "event",
+      "api_version": "2026-09-30.endive",
+      "created": 1791902919,
+      "data": {
+        "object": {
+          "id": "du_1UQ70J0fs4pzuDIIMSkMLS3L",
+          "object": "dispute",
+          "amount": 10000,
+          "balance_transaction": "txn_1UQ70K0fs4pzuDIICxNJrdT2",
+          "balance_transactions": [
+            {
+              "id": "txn_1UQ70K0fs4pzuDIICxNJrdT2",
+              "object": "balance_transaction",
+              "amount": -10000,
+              "available_on": 1791902915,
+              "balance_type": "payments",
+              "created": 1791902915,
+              "currency": "usd",
+              "description": "Chargeback withdrawal for ch_3UQ70H0fs4pzuDII1TULCLLX",
+              "exchange_rate": null,
+              "fee": 1500,
+              "fee_details": [
+                {
+                  "amount": 1500,
+                  "application": null,
+                  "currency": "usd",
+                  "description": "Dispute fee",
+                  "type": "stripe_fee"
+                }
+              ],
+              "net": -11500,
+              "reporting_category": "dispute",
+              "source": "du_1UQ70J0fs4pzuDIIMSkMLS3L",
+              "status": "available",
+              "type": "adjustment"
+            }
+          ],
+          "charge": "ch_3UQ70H0fs4pzuDII1TULCLLX",
+          "created": 1791902915,
+          "currency": "usd",
+          "enhanced_eligibility_types": [],
+          "evidence": {
+            "access_activity_log": null,
+            "billing_address": null,
+            "cancellation_policy": null,
+            "cancellation_policy_disclosure": null,
+            "cancellation_rebuttal": null,
+            "customer_communication": null,
+            "customer_email_address": null,
+            "customer_name": null,
+            "customer_purchase_ip": null,
+            "customer_signature": null,
+            "duplicate_charge_documentation": null,
+            "duplicate_charge_explanation": null,
+            "duplicate_charge_id": null,
+            "enhanced_evidence": {},
+            "product_description": "SINTETICO · JPTRS-53 · disputa perdida",
+            "receipt": null,
+            "refund_policy": null,
+            "refund_policy_disclosure": null,
+            "refund_refusal_explanation": null,
+            "service_date": null,
+            "service_documentation": null,
+            "shipping_address": null,
+            "shipping_carrier": null,
+            "shipping_date": null,
+            "shipping_documentation": null,
+            "shipping_tracking_number": null,
+            "uncategorized_file": null,
+            "uncategorized_text": "losing_evidence"
+          },
+          "evidence_details": {
+            "due_by": 1792627199,
+            "enhanced_eligibility": {},
+            "has_evidence": true,
+            "past_due": false,
+            "submission_count": 1
+          },
+          "intended_submission_method": "prefer_manual",
+          "is_charge_refundable": false,
+          "livemode": false,
+          "metadata": {},
+          "payment_intent": "pi_3UQ70H0fs4pzuDII1O79nnUX",
+          "payment_method_details": {
+            "card": {
+              "brand": "visa",
+              "case_type": "chargeback",
+              "network": "visa",
+              "network_reason_code": "13.1"
+            },
+            "type": "card"
+          },
+          "reason": "product_not_received",
+          "status": "lost"
+        }
+      },
+      "livemode": false,
+      "pending_webhooks": 0,
+      "request": {
+        "id": null,
+        "idempotency_key": null
+      },
+      "type": "charge.dispute.closed"
+    }
+  ]
+}
