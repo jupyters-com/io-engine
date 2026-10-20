@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: org_stripe__clientes
+    description: "Origen · clientes de Stripe, sin cambios."
+    columns:
+      - name: id
+        data_tests: [unique, not_null]
+  - name: org_stripe__cargos
+    description: "Origen · cargos de Stripe, sin cambios."
+    columns:
+      - name: id
+        data_tests: [unique, not_null]
+  - name: org_stripe__disputas
+    description: "Origen · disputas de Stripe, sin cambios."
+    columns:
+      - name: id
+        data_tests: [unique, not_null]
+  - name: org_logistica__envios
+    description: "Origen · envíos del operador logístico, sin cambios."
+    columns:
+      - name: guia
+        data_tests: [unique, not_null]
+  - name: org_soporte__tickets
+    description: "Origen · tickets de soporte, sin cambios."
+    columns:
+      - name: ticket
+        data_tests: [unique, not_null]

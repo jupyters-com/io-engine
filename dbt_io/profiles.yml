@@ -1,0 +1,8 @@
+io_engine:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      # Misma base que llena dlt (paso 6). Se puede cambiar con la variable IO_DUCKDB.
+      path: "{{ env_var('IO_DUCKDB', '../datos/io.duckdb') }}"
+      threads: 4

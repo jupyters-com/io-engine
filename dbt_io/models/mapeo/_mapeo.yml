@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: map_clientes
+    description: "Mapeo · clientes con nombres de IO. Correo normalizado (minúsculas, sin espacios)."
+  - name: map_pagos
+    description: "Mapeo · pagos con nombres de IO. Montos en unidades, fechas en UTC."
+  - name: map_disputas
+    description: "Mapeo · disputas con su pedido y cliente (vía el pago)."
+  - name: map_envios
+    description: "Mapeo · envíos con el pedido en formato ORD-n y fechas como DATE."
+  - name: map_mensajes_soporte
+    description: "Mapeo · tickets con el pedido en formato ORD-n y el correo normalizado."
