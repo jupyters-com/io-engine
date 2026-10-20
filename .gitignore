@@ -225,6 +225,7 @@ logs/
 __pycache__/
 .pytest_cache/
 .env
+.env.local
 dbt_io/target/
 dbt_io/logs/
 dbt_io/dbt_packages/
