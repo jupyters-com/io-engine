@@ -1,0 +1,28 @@
+name: io_engine
+version: "0.1.0"
+config-version: 2
+profile: io_engine
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages", "logs"]
+
+vars:
+  fecha_corte: "2026-09-30"        # fecha de la foto de los datos
+  dias_gracia_entrega: 3           # sin entregar 3 días después de lo prometido = tarde
+  ventana_zona_dias: 7             # ventana para medir atrasos de un transportista en una región
+  umbral_zona_atrasos: 0.5         # >= 50 % de entregas tarde en esa ventana = zona con atrasos
+
+models:
+  io_engine:
+    origen:
+      +schema: origen
+      +materialized: view
+    mapeo:
+      +schema: mapeo
+      +materialized: view
+    canonico:
+      +schema: canonico
+      +materialized: table

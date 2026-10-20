@@ -225,3 +225,7 @@ logs/
 __pycache__/
 .pytest_cache/
 .env
+dbt_io/target/
+dbt_io/logs/
+dbt_io/dbt_packages/
+dbt_io/.user.yml

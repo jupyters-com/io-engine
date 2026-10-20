@@ -1,0 +1,17 @@
+version: 2
+
+# Las tres fuentes tal como las dejó dlt (paso 6), en el esquema "crudo".
+sources:
+  - name: crudo
+    description: "Datos SINTÉTICOS cargados por dlt desde samples/sintetico (JPTRS-61)."
+    tables:
+      - name: pagos_customers
+        description: "Stripe · clientes"
+      - name: pagos_charges
+        description: "Stripe · cargos (el pedido viene en metadata.order_id)"
+      - name: pagos_disputes
+        description: "Stripe · disputas"
+      - name: envios
+        description: "Operador logístico · envíos (fechas dd/mm/aaaa, pedido sin prefijo)"
+      - name: soporte_tickets
+        description: "Sistema de tickets · mensajes (pedido con #, correo con mayúsculas variables)"

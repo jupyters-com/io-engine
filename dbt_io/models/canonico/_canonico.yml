@@ -1,0 +1,97 @@
+version: 2
+
+models:
+  - name: clientes
+    description: "IO · una fila por cliente."
+    columns:
+      - name: cliente_id
+        data_tests: [unique, not_null]
+      - name: correo
+        description: "Correo normalizado (minúsculas, sin espacios). Une al cliente con sus mensajes de soporte."
+        data_tests: [unique, not_null]
+
+  - name: pagos
+    description: "IO · una fila por pago (cobro). Un pago por pedido."
+    columns:
+      - name: pago_id
+        data_tests: [unique, not_null]
+      - name: pedido_id
+        data_tests: [unique, not_null]
+      - name: cliente_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('clientes'), field: cliente_id}
+      - name: nivel_riesgo
+        data_tests:
+          - accepted_values:
+              arguments: {values: ['normal', 'elevated', 'highest']}
+
+  - name: envios
+    description: "IO · una fila por envío, con las definiciones de entrega."
+    columns:
+      - name: envio_id
+        data_tests: [unique, not_null]
+      - name: pedido_id
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments: {to: ref('pagos'), field: pedido_id}
+      - name: estado
+        data_tests:
+          - accepted_values:
+              arguments: {values: ['entregado', 'en_transito', 'extraviado', 'devuelto']}
+      - name: entrega_confirmada
+        description: '{{ doc("entrega_confirmada") }}'
+      - name: entrega_tarde
+        description: '{{ doc("entrega_tarde") }}'
+      - name: zona_con_atrasos
+        description: '{{ doc("zona_con_atrasos") }}'
+
+  - name: mensajes_soporte
+    description: "IO · una fila por mensaje de soporte, unido a su cliente."
+    columns:
+      - name: mensaje_id
+        data_tests: [unique, not_null]
+      - name: cliente_id
+        description: "Todo mensaje debe poder unirse a un cliente por su correo."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('clientes'), field: cliente_id}
+      - name: pedido_id
+        data_tests:
+          - relationships:
+              arguments: {to: ref('pagos'), field: pedido_id}
+
+  - name: disputas
+    description: "IO · una fila por disputa, con su contexto (pago, envío, soporte, historial) y la decisión."
+    columns:
+      - name: disputa_id
+        data_tests: [unique, not_null]
+      - name: pago_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('pagos'), field: pago_id}
+      - name: envio_id
+        description: "Toda disputa debe tener su envío."
+        data_tests: [not_null]
+      - name: motivo
+        data_tests:
+          - accepted_values:
+              arguments: {values: ['fraudulent', 'product_not_received', 'unrecognized']}
+      - name: reclamo_previo
+        description: '{{ doc("reclamo_previo") }}'
+      - name: senales_fraude
+        description: '{{ doc("senales_fraude") }}'
+      - name: causa_operativa
+        description: '{{ doc("causa_operativa") }}'
+      - name: vale_pelear
+        description: '{{ doc("vale_pelear") }}'
+      - name: decision
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: {values: ['pelear', 'no_pelear']}
