@@ -1,3 +1,5 @@
 duckdb>=1.1
 mcp>=2.2,<3
+dlt[duckdb]>=1.0
+pandas>=2
 pytest>=8
