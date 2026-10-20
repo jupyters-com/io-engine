@@ -218,3 +218,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Generados al correr el motor (no se suben)
+datos/
+logs/
+__pycache__/
+.pytest_cache/
+.env
