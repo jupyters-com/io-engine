@@ -20,6 +20,7 @@ def base_de_prueba(tmp_path, monkeypatch):
     monkeypatch.setenv("IO_LOG", str(tmp_path / "consultar.jsonl"))
     monkeypatch.setenv("IO_LIMITE_FILAS", "100")
     monkeypatch.setenv("IO_RUN_ID", "test")
+    monkeypatch.delenv("IO_MOTOR", raising=False)
     return tmp_path
 
 
@@ -90,3 +91,42 @@ def test_cada_llamada_deja_una_linea_en_el_log(base_de_prueba):
 
     assert rechazada["ok"] is False and "DROP" in rechazada["error"]
     assert rechazada["sql"] == "DROP TABLE disputas"
+
+
+# --- Qué motor respondió (pedido de JPTRS-47: el video y la DoD 3 lo verifican en el log) ---
+
+def test_log_registra_que_motor_respondio(base_de_prueba):
+    r = consultar("SELECT id FROM disputas WHERE id = 1")
+    assert r["motor"] == "duckdb" and r["respaldo"] is False
+    linea = leer_log(base_de_prueba)[0]
+    assert linea["motor"] == "duckdb" and linea["respaldo"] is False
+    assert linea["motivo_respaldo"] is None
+
+
+def test_consulta_rechazada_no_tiene_motor(base_de_prueba):
+    r = consultar("DROP TABLE disputas")
+    assert r["motor"] is None and r["respaldo"] is False
+    assert leer_log(base_de_prueba)[0]["motor"] is None
+
+
+def test_error_de_sql_registra_el_motor_que_lo_intento(base_de_prueba):
+    consultar("SELECT columna_que_no_existe FROM disputas")
+    linea = leer_log(base_de_prueba)[0]
+    assert linea["ok"] is False and linea["motor"] == "duckdb"
+
+
+def test_zetaris_no_disponible_responde_duckdb_como_respaldo(base_de_prueba, monkeypatch):
+    # Mientras no exista el adaptador (JPTRS-63), pedir Zetaris equivale a "Zetaris apagado".
+    monkeypatch.setenv("IO_MOTOR", "zetaris")
+    r = consultar("SELECT count(*) AS n FROM disputas")
+    assert r["ok"] and r["filas"] == [{"n": 150}]
+    assert r["motor"] == "duckdb" and r["respaldo"] is True
+    linea = leer_log(base_de_prueba)[0]
+    assert linea["motor"] == "duckdb" and linea["respaldo"] is True
+    assert "Zetaris" in linea["motivo_respaldo"]
+
+
+def test_motor_desconocido_se_rechaza(monkeypatch):
+    monkeypatch.setenv("IO_MOTOR", "postgres")
+    r = consultar("SELECT 1")
+    assert r["ok"] is False and "IO_MOTOR" in r["error"] and r["motor"] is None
