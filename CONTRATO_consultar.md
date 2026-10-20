@@ -57,7 +57,13 @@ Tres barreras: se revisa el tipo de sentencia antes de ejecutar, la base se abre
 | `zetaris`, Zetaris responde | Responde Zetaris | `zetaris` | `false` |
 | `zetaris`, Zetaris no responde | Responde DuckDB | `duckdb` | `true` |
 
-Hoy el adaptador de Zetaris no existe todavía (llega en JPTRS-63), así que `IO_MOTOR=zetaris` cae siempre en la tercera fila. Es el mismo camino que la DoD 3 del Brief: la misma consulta con Zetaris prendido y apagado se distingue comparando `motor` y `respaldo` en el log.
+Zetaris "no responde" cuando faltan credenciales, no hay conexión, el token es rechazado (401/403), la ruta no existe (404) o el servidor falla (5xx). Si Zetaris **sí** responde pero rechaza el SQL (400/422), no hay respaldo: se devuelve el error con `motor: zetaris`.
+
+Es el mismo camino que la DoD 3 del Brief: la misma consulta con Zetaris prendido y apagado se distingue comparando `motor` y `respaldo` en el log.
+
+### Adaptador de Zetaris
+
+Usa la misma ruta que el SQL Workspace de Zetaris: `POST {ZETARIS_URL}/api/proxy/sql-editor/sqls/run-stream`, con `Authorization: Bearer <ZETARIS_API_TOKEN>`, `X-Request-ID` y `X-Org-ID`. La respuesta es una línea JSON con las columnas y una por fila. **Zetaris devuelve todos los valores como texto** (`"42"`), DuckDB con su tipo (`42`).
 
 ## Log (`logs/consultar.jsonl`)
 
@@ -80,4 +86,6 @@ Una línea por llamada, aceptada o rechazada:
 | `IO_LIMITE_FILAS` | `100` |
 | `IO_TIMEOUT_S` | `10` |
 | `IO_RUN_ID` | vacío (identifica la corrida en el log) |
-| `IO_MOTOR` | `duckdb` (`zetaris` queda previsto para JPTRS-63) |
+| `IO_MOTOR` | `duckdb` (o `zetaris`) |
+| `ZETARIS_URL`, `ZETARIS_API_TOKEN`, `ZETARIS_ORG_ID` | en `.env.local` (ver `.env.example`); nunca en el repo |
+| `ZETARIS_RUTA_SQL` | `/api/proxy/sql-editor/sqls/run-stream` |

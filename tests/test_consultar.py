@@ -2,11 +2,14 @@
     python -m pytest -q
 """
 
+import io
 import json
+import urllib.error
 
 import duckdb
 import pytest
 
+from motor import consultar as nucleo
 from motor.consultar import consultar
 
 
@@ -21,6 +24,8 @@ def base_de_prueba(tmp_path, monkeypatch):
     monkeypatch.setenv("IO_LIMITE_FILAS", "100")
     monkeypatch.setenv("IO_RUN_ID", "test")
     monkeypatch.delenv("IO_MOTOR", raising=False)
+    for v in ("ZETARIS_URL", "ZETARIS_API_TOKEN", "ZETARIS_ORG_ID"):
+        monkeypatch.delenv(v, raising=False)
     return tmp_path
 
 
@@ -115,18 +120,83 @@ def test_error_de_sql_registra_el_motor_que_lo_intento(base_de_prueba):
     assert linea["ok"] is False and linea["motor"] == "duckdb"
 
 
-def test_zetaris_no_disponible_responde_duckdb_como_respaldo(base_de_prueba, monkeypatch):
-    # Mientras no exista el adaptador (JPTRS-63), pedir Zetaris equivale a "Zetaris apagado".
+def test_zetaris_sin_credenciales_responde_duckdb_como_respaldo(base_de_prueba, monkeypatch):
     monkeypatch.setenv("IO_MOTOR", "zetaris")
     r = consultar("SELECT count(*) AS n FROM disputas")
     assert r["ok"] and r["filas"] == [{"n": 150}]
     assert r["motor"] == "duckdb" and r["respaldo"] is True
     linea = leer_log(base_de_prueba)[0]
     assert linea["motor"] == "duckdb" and linea["respaldo"] is True
-    assert "Zetaris" in linea["motivo_respaldo"]
+    assert "ZETARIS_API_TOKEN" in linea["motivo_respaldo"]
 
 
 def test_motor_desconocido_se_rechaza(monkeypatch):
     monkeypatch.setenv("IO_MOTOR", "postgres")
     r = consultar("SELECT 1")
     assert r["ok"] is False and "IO_MOTOR" in r["error"] and r["motor"] is None
+
+
+# --- Adaptador de Zetaris (sin red: se reemplaza la llamada HTTP) ---
+
+@pytest.fixture
+def zetaris(monkeypatch):
+    monkeypatch.setenv("IO_MOTOR", "zetaris")
+    monkeypatch.setenv("ZETARIS_URL", "https://zetaris.ejemplo.test")
+    monkeypatch.setenv("ZETARIS_API_TOKEN", "token-de-prueba")
+    monkeypatch.setenv("ZETARIS_ORG_ID", "1")
+    llamadas = []
+
+    def instalar(respuesta):
+        def falso_post(url, cuerpo, cabeceras, timeout_s):
+            llamadas.append({"url": url, "cuerpo": cuerpo, "cabeceras": cabeceras})
+            if isinstance(respuesta, Exception):
+                raise respuesta
+            return respuesta
+        monkeypatch.setattr(nucleo, "_post_zetaris", falso_post)
+        return llamadas
+    return instalar
+
+
+def test_zetaris_responde(base_de_prueba, zetaris):
+    llamadas = zetaris('["transportista","disputas"]\n["RapidEnvio","14"]\n["CargoSur","1"]\n')
+    r = consultar("SELECT transportista, disputas FROM x")
+    assert r["ok"] and r["motor"] == "zetaris" and r["respaldo"] is False
+    assert r["filas"] == [{"transportista": "RapidEnvio", "disputas": "14"},
+                          {"transportista": "CargoSur", "disputas": "1"}]
+    pedido = llamadas[0]
+    assert pedido["url"].endswith("/api/proxy/sql-editor/sqls/run-stream")
+    assert pedido["cuerpo"]["sql"] == "SELECT transportista, disputas FROM x"
+    assert pedido["cuerpo"]["limit"] == 101
+    assert pedido["cabeceras"]["Authorization"] == "Bearer token-de-prueba"
+    assert pedido["cabeceras"]["X-Org-ID"] == "1"
+    linea = leer_log(base_de_prueba)[0]
+    assert linea["motor"] == "zetaris" and linea["respaldo"] is False
+    assert "token-de-prueba" not in json.dumps(linea)  # el token nunca va al log
+
+
+def test_zetaris_corta_en_el_limite(base_de_prueba, zetaris, monkeypatch):
+    monkeypatch.setenv("IO_LIMITE_FILAS", "2")
+    zetaris('["id"]\n["1"]\n["2"]\n["3"]\n')
+    r = consultar("SELECT id FROM x")
+    assert r["n_filas"] == 2 and r["truncado"] is True
+
+
+def test_zetaris_caido_responde_duckdb(base_de_prueba, zetaris):
+    zetaris(urllib.error.URLError("connection refused"))
+    r = consultar("SELECT count(*) AS n FROM disputas")
+    assert r["ok"] and r["filas"] == [{"n": 150}]
+    assert r["motor"] == "duckdb" and r["respaldo"] is True
+    assert "No se pudo conectar" in r["motivo_respaldo"]
+
+
+def test_zetaris_token_invalido_responde_duckdb(base_de_prueba, zetaris):
+    zetaris(urllib.error.HTTPError("u", 401, "Unauthorized", {}, io.BytesIO(b"bad token")))
+    r = consultar("SELECT count(*) AS n FROM disputas")
+    assert r["motor"] == "duckdb" and r["respaldo"] is True and "401" in r["motivo_respaldo"]
+
+
+def test_zetaris_rechaza_el_sql_no_usa_respaldo(base_de_prueba, zetaris):
+    zetaris(urllib.error.HTTPError("u", 400, "Bad Request", {}, io.BytesIO(b"Table not found")))
+    r = consultar("SELECT * FROM tabla_que_no_existe")
+    assert r["ok"] is False and "Table not found" in r["error"]
+    assert r["motor"] == "zetaris" and r["respaldo"] is False

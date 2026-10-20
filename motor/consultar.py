@@ -9,10 +9,29 @@ import json
 import os
 import threading
 import time
+import urllib.error
+import urllib.request
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
 import duckdb
+
+
+def _cargar_env_local(ruta=".env.local"):
+    """Lee KEY=VALOR de .env.local (si existe) sin pisar variables ya definidas.
+    Ahí viven las credenciales de Zetaris; el archivo está en .gitignore."""
+    archivo = Path(ruta)
+    if not archivo.is_file():
+        return
+    for linea in archivo.read_text(encoding="utf-8").splitlines():
+        linea = linea.strip()
+        if linea and not linea.startswith("#") and "=" in linea:
+            clave, valor = linea.split("=", 1)
+            os.environ.setdefault(clave.strip(), valor.strip().strip('"').strip("'"))
+
+
+_cargar_env_local()
 
 
 class ConsultaRechazada(Exception):
@@ -21,6 +40,11 @@ class ConsultaRechazada(Exception):
 
 class MotorNoDisponible(Exception):
     """El motor principal (Zetaris) no pudo responder; se usa DuckDB como respaldo."""
+
+
+class ErrorDelMotor(Exception):
+    """El motor respondió, pero rechazó el SQL (p. ej. tabla inexistente). No hay respaldo:
+    el error es de la consulta, no de que Zetaris esté apagado."""
 
 
 MOTORES = ("duckdb", "zetaris")
@@ -33,9 +57,12 @@ def _config():
         "limite": int(os.getenv("IO_LIMITE_FILAS", "100")),
         "timeout_s": float(os.getenv("IO_TIMEOUT_S", "10")),
         "run_id": os.getenv("IO_RUN_ID", ""),
-        # Quién intenta responder primero. Hoy solo existe DuckDB; "zetaris" queda
-        # previsto para el adaptador del paso 8 (JPTRS-63).
+        # Quién intenta responder primero: "duckdb" o "zetaris" (con DuckDB de respaldo).
         "motor": os.getenv("IO_MOTOR", "duckdb").strip().lower(),
+        "zetaris_url": os.getenv("ZETARIS_URL", "").rstrip("/"),
+        "zetaris_token": os.getenv("ZETARIS_API_TOKEN", ""),
+        "zetaris_org": os.getenv("ZETARIS_ORG_ID", ""),
+        "zetaris_ruta": os.getenv("ZETARIS_RUTA_SQL", "/api/proxy/sql-editor/sqls/run-stream"),
     }
 
 
@@ -98,11 +125,59 @@ def _ejecutar_duckdb(sql_limpio: str, cfg: dict):
         con.close()
 
 
+def _post_zetaris(url: str, cuerpo: dict, cabeceras: dict, timeout_s: float) -> str:
+    """Una llamada HTTP. Separada para poder reemplazarla en las pruebas."""
+    pedido = urllib.request.Request(
+        url, data=json.dumps(cuerpo).encode("utf-8"), headers=cabeceras, method="POST"
+    )
+    with urllib.request.urlopen(pedido, timeout=timeout_s) as r:
+        return r.read().decode("utf-8")
+
+
 def _ejecutar_zetaris(sql_limpio: str, cfg: dict):
-    # Lugar reservado para el adaptador (JPTRS-63). Mientras no exista, Zetaris
-    # "no está disponible" y responde DuckDB con respaldo=true: el mismo camino
-    # que se verá en la DoD 3 con Zetaris apagado.
-    raise MotorNoDisponible("El adaptador de Zetaris todavía no está implementado (JPTRS-63).")
+    """Manda el SQL a Zetaris por la misma ruta que usa su SQL Workspace (run-stream).
+
+    La respuesta es texto: una línea JSON con las columnas y una por fila, p. ej.
+        ["n"]
+        ["42"]
+    Zetaris devuelve todos los valores como texto.
+    """
+    if not (cfg["zetaris_url"] and cfg["zetaris_token"]):
+        raise MotorNoDisponible("Faltan ZETARIS_URL o ZETARIS_API_TOKEN en .env.local.")
+
+    cuerpo = {
+        "queryId": str(uuid.uuid4()),
+        "sql": sql_limpio,
+        "limit": cfg["limite"] + 1,  # una de más para saber si hubo que cortar
+        "chunkSize": 10000,
+        "source": "SqlEditor",
+    }
+    cabeceras = {
+        "Authorization": f"Bearer {cfg['zetaris_token']}",
+        "Content-Type": "application/json",
+        "Accept": "text/plain",
+        "X-Request-ID": str(uuid.uuid4()),
+    }
+    if cfg["zetaris_org"]:
+        cabeceras["X-Org-ID"] = cfg["zetaris_org"]
+
+    try:
+        texto = _post_zetaris(cfg["zetaris_url"] + cfg["zetaris_ruta"], cuerpo, cabeceras,
+                              cfg["timeout_s"])
+    except urllib.error.HTTPError as e:
+        detalle = e.read().decode("utf-8", "replace")[:300]
+        if e.code in (400, 422):
+            raise ErrorDelMotor(f"Zetaris rechazó la consulta: {detalle}") from e
+        # 401/403 (token), 404 (ruta), 5xx (caído): Zetaris no está disponible.
+        raise MotorNoDisponible(f"Zetaris respondió HTTP {e.code}: {detalle}") from e
+    except (urllib.error.URLError, TimeoutError, OSError) as e:
+        raise MotorNoDisponible(f"No se pudo conectar con Zetaris: {e}") from e
+
+    lineas = [json.loads(l) for l in texto.splitlines() if l.strip()]
+    if not lineas or not isinstance(lineas[0], list):
+        raise MotorNoDisponible(f"Respuesta inesperada de Zetaris: {texto[:200]!r}")
+    columnas, filas = lineas[0], [tuple(f) for f in lineas[1:]]
+    return columnas, filas
 
 
 def _ejecutar(sql_limpio: str, cfg: dict, estado: dict):
@@ -145,6 +220,8 @@ def consultar(sql: str) -> dict:
 
     except ConsultaRechazada as e:
         resultado = {"ok": False, "error": str(e)}
+    except ErrorDelMotor as e:
+        resultado = {"ok": False, "error": f"Error de SQL: {e}"}
     except duckdb.InterruptException:
         resultado = {"ok": False, "error": f"La consulta superó el límite de {cfg['timeout_s']} s."}
     except duckdb.Error as e:
