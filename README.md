@@ -99,3 +99,7 @@ python -m pytest
 | `IO_MCP_TRANSPORTE` | `stdio` (`http` en Docker) | cómo se sirve MCP |
 | `IO_MCP_HOST` / `IO_MCP_PUERTO` | `127.0.0.1` / `8000` | dónde escucha MCP por HTTP |
 | `ZETARIS_URL`, `ZETARIS_API_TOKEN`, `ZETARIS_ORG_ID` | — | solo en `.env.local` |
+
+## License
+
+PolyForm Noncommercial 1.0.0. You can read, run and study this code for any noncommercial purpose. Commercial use requires written permission from Jupyters. See [LICENSE](LICENSE).
