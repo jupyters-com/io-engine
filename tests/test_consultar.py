@@ -63,6 +63,16 @@ def test_escrituras_se_rechazan_con_error_claro(sql, palabra):
     assert consultar("SELECT count(*) AS n FROM disputas")["filas"] == [{"n": 150}]  # nada cambió
 
 
+@pytest.mark.parametrize("sql", [
+    "SELECT count(*) AS n FROM disputas -- comentario al final",
+    "SELECT count(*) AS n FROM disputas /* comentario */",
+    "-- comentario al inicio\nSELECT count(*) AS n FROM disputas",
+])
+def test_comentarios_no_rompen_la_consulta(sql):
+    r = consultar(sql)
+    assert r["ok"] is True and r["filas"] == [{"n": 150}]
+
+
 def test_varias_sentencias_se_rechazan():
     r = consultar("SELECT 1; DROP TABLE disputas")
     assert r["ok"] is False and "una sola sentencia" in r["error"]
