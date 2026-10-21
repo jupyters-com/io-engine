@@ -1,0 +1,10 @@
+---
+description: Usage log, model policy and code freeze for the hackathon
+alwaysApply: true
+---
+
+1. After each task you complete in this repo, append one line to docs/cursor-usage.md:
+   date | what you built or changed | files touched | Cursor feature used (Agent, Composer, Tab, MCP).
+   At the end of the hackathon this file feeds the "How we used Cursor" section of the README and metadata.json.
+2. Use only Cursor's built-in models. Never ask me to add my own AI provider API key in Cursor settings.
+3. Do not write or commit agent code before 2026-10-22 00:00 UTC (21:00 Buenos Aires). Before that, only setup and docs.
