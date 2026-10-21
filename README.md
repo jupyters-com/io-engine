@@ -37,7 +37,9 @@ pip install -r requirements.txt
 python scripts/arrancar.py
 ```
 
-## Componentes
+## Componentes previos (antes del 22-oct-2026 00:00 UTC)
+
+Todo lo de esta sección existía antes de que abriera la ventana de construcción del hackathon y se declara como componente previo. La versión exacta está marcada con el tag `previo-22oct`. Los datos sintéticos también cuentan como componente previo.
 
 | Componente | Qué hace en IO | Dónde vive |
 | --- | --- | --- |
@@ -49,6 +51,12 @@ python scripts/arrancar.py
 | **MCP** | Expone `consultar(sql)` como herramienta estándar para agentes: por stdio o por HTTP (`/mcp`). | `motor/servidor_mcp.py` |
 | **Adaptador de Zetaris** | Con `IO_MOTOR=zetaris`, `consultar(sql)` le pregunta a Zetaris, que une las fuentes sin copiarlas. Si Zetaris no responde (sin credenciales, caído o token rechazado), responde DuckDB y el log lo marca con `respaldo: true` y el motivo. | `motor/consultar.py`, vistas en `zetaris/canonico.sql` |
 | **Docker** | Empaqueta todo para que corra igual en cualquier máquina con un solo comando. | `Dockerfile`, `docker-compose.yml` |
+
+## Trabajo nuevo durante el hackathon
+
+Lo que se construya desde el 22-oct se lista aquí, con lo que cambió respecto de la versión `previo-22oct`.
+
+- _(por completar)_
 
 ## Las tablas que ve el agente
 
