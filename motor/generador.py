@@ -268,7 +268,7 @@ class _Generador:
 
         fmt = lambda d: d.strftime("%d/%m/%Y") if d else ""
         with open(carpeta / "envios.csv", "w", newline="", encoding="utf-8") as f:
-            w = csv.writer(f)
+            w = csv.writer(f, lineterminator="\n")  # LF siempre, igual en Windows y Linux
             w.writerow(["guia", "nro_pedido", "transportista", "region", "fecha_despacho", "fecha_prometida",
                         "fecha_entrega", "estado", "prueba_entrega", "tipo_destino"])
             for p in self.pedidos:

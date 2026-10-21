@@ -47,7 +47,15 @@ Se rechaza, sin tocar la base, cuando:
 | Tarda más del límite | más de `IO_TIMEOUT_S` segundos (10 por defecto) |
 | Tiene un error de SQL | tabla o columna que no existe |
 
-Tres barreras: se revisa el tipo de sentencia antes de ejecutar, la base se abre en **solo lectura** y el acceso a archivos externos está **desactivado**.
+### Barreras según el motor
+
+| Barrera | DuckDB | Zetaris |
+| --- | --- | --- |
+| 1. Una sola sentencia `SELECT` (se revisa antes de ejecutar) | ✔ | ✔ |
+| 2. Base abierta en solo lectura | ✔ | ✘ depende de los permisos del token |
+| 3. Sin acceso a archivos externos | ✔ | ✘ depende de los permisos del token |
+
+Con Zetaris solo rige la barrera 1 desde nuestro código. Por eso el `ZETARIS_API_TOKEN` debe ser de un usuario con un rol de **solo lectura** sobre las fuentes de IO (Management → Roles en Zetaris). Mientras usemos el usuario administrador, la barrera 1 es la única protección.
 
 ## Qué motor responde
 

@@ -1,0 +1,3 @@
+# Finales de línea LF en los datos de muestra, en cualquier sistema operativo.
+*.csv  text eol=lf
+*.json text eol=lf

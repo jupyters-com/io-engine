@@ -117,8 +117,9 @@ def _ejecutar_duckdb(sql_limpio: str, cfg: dict):
     reloj = threading.Timer(cfg["timeout_s"], con.interrupt)
     reloj.start()
     try:
-        # Pedimos una fila de más para saber si hubo que cortar.
-        cur = con.execute(f"SELECT * FROM ({sql_limpio}) AS q LIMIT {cfg['limite'] + 1}")
+        # Pedimos una fila de más para saber si hubo que cortar. El salto de línea antes de
+        # ") AS q" evita que un comentario final ("SELECT 1 -- nota") se coma el cierre.
+        cur = con.execute(f"SELECT * FROM ({sql_limpio}\n) AS q LIMIT {cfg['limite'] + 1}")
         return [d[0] for d in cur.description], cur.fetchall()
     finally:
         reloj.cancel()
