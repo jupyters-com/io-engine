@@ -172,6 +172,9 @@ def _ejecutar_zetaris(sql_limpio: str, cfg: dict):
         # 401/403 (token), 404 (ruta), 5xx (caído): Zetaris no está disponible.
         raise MotorNoDisponible(f"Zetaris respondió HTTP {e.code}: {detalle}") from e
     except (urllib.error.URLError, TimeoutError, OSError) as e:
+        if isinstance(e, TimeoutError) or "timed out" in str(e):
+            raise MotorNoDisponible(
+                f"Zetaris no respondió dentro de {cfg['timeout_s']:g} s (IO_TIMEOUT_S).") from e
         raise MotorNoDisponible(f"No se pudo conectar con Zetaris: {e}") from e
 
     lineas = [json.loads(l) for l in texto.splitlines() if l.strip()]

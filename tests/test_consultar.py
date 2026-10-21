@@ -210,3 +210,10 @@ def test_zetaris_rechaza_el_sql_no_usa_respaldo(base_de_prueba, zetaris):
     r = consultar("SELECT * FROM tabla_que_no_existe")
     assert r["ok"] is False and "Table not found" in r["error"]
     assert r["motor"] == "zetaris" and r["respaldo"] is False
+
+
+def test_zetaris_lento_dice_que_fue_por_tiempo(base_de_prueba, zetaris):
+    zetaris(TimeoutError("The read operation timed out"))
+    r = consultar("SELECT count(*) AS n FROM disputas")
+    assert r["motor"] == "duckdb" and r["respaldo"] is True
+    assert "no respondió dentro de" in r["motivo_respaldo"]

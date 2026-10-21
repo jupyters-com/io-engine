@@ -1,0 +1,13 @@
+# Un solo comando:  docker compose up --build
+# Deja consultar(sql) en http://localhost:8000/mcp y la evidencia en ./logs/consultar.jsonl
+services:
+  motor:
+    build: .
+    image: io-engine
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs:/app/logs          # el JSONL queda en tu carpeta, fuera del contenedor
+    env_file:
+      - path: .env.local          # opcional. Sin él responde DuckDB. Con ZETARIS_* e IO_MOTOR=zetaris,
+        required: false           # responde Zetaris y DuckDB queda de respaldo.

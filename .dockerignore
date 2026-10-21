@@ -1,0 +1,11 @@
+.git
+.env
+.env.local
+datos/
+logs/
+dbt_io/target/
+dbt_io/logs/
+dbt_io/dbt_packages/
+dbt_io/.user.yml
+**/__pycache__/
+.pytest_cache/

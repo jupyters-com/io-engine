@@ -1,8 +1,12 @@
 """Servidor MCP del motor de IO, con una sola herramienta: consultar(sql).
 
-Se ejecuta así (lo lanza el agente, o el script de prueba):
-    python -m motor.servidor_mcp
+Dos formas de servirlo:
+    python -m motor.servidor_mcp            # stdio: lo lanza el agente como proceso hijo
+    IO_MCP_TRANSPORTE=http python -m motor.servidor_mcp
+                                            # HTTP en http://<host>:8000/mcp (así corre en Docker)
 """
+
+import os
 
 from mcp.server.mcpserver import MCPServer
 
@@ -29,5 +33,14 @@ def consultar(sql: str) -> dict:
     return nucleo.consultar(sql)
 
 
+def servir():
+    if os.getenv("IO_MCP_TRANSPORTE", "stdio").lower() in ("http", "streamable-http"):
+        servidor.run("streamable-http",
+                     host=os.getenv("IO_MCP_HOST", "127.0.0.1"),
+                     port=int(os.getenv("IO_MCP_PUERTO", "8000")))
+    else:
+        servidor.run("stdio")
+
+
 if __name__ == "__main__":
-    servidor.run("stdio")
+    servir()
