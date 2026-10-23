@@ -56,7 +56,16 @@ Todo lo de esta sección existía antes de que abriera la ventana de construcci�
 
 Lo que se construya desde el 22-oct se lista aquí, con lo que cambió respecto de la versión `previo-22oct`.
 
-- _(por completar)_
+Durante la ventana del hackathon (desde el 22-oct-2026 00:00 UTC) io-engine **no cambió por dentro**: el agente lo usa tal como quedó en el tag `previo-22oct` (commit `351b437`, del 21-oct-2026). Se puede comprobar con `git diff previo-22oct --stat`, que solo muestra cambios en este README.
+
+El trabajo nuevo del hackathon está en el repo **io-agent**:
+
+- el agente que investiga disputas: propone hipótesis, las prueba con `consultar(sql)` y descarta las que la evidencia no sostiene, con un Evaluador que exige evidencia real;
+- Meterless dentro del agente: Nightshift como proveedor de IA (NVIDIA Nemotron), H-MEM como memoria entre corridas y World Model como registro de lo que el agente vio;
+- la cola de aprobación con las respuestas a los bancos y su política;
+- la comparación con y sin la capa de IO, y la medición sobre 42 disputas (42 de 42 con la capa, 8 de 42 sin ella).
+
+Lo único que el agente usa distinto del motor: con `SEMANTIC_LAYER=off` consulta el esquema `crudo` (que ya existía, lo carga dlt) en lugar de `canonico`, para mostrar qué pasa sin la capa semántica.
 
 ## Las tablas que ve el agente
 
